@@ -135,10 +135,10 @@ public class ImageEntity implements Serializable {
         return new HashCodeBuilder().append(this).hashCode();
     }
 
-    @Override
+    /*@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+    }*/
 
 
 }

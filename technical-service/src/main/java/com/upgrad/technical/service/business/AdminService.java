@@ -51,38 +51,31 @@ public class AdminService {
         if(userAuthToken == null)
             throw new UserNotSignedInException("USR-001", "Please sign in to update the image");
 
-        //Then check the role of the user with entered access token (if nonadmin then throw UnauthorizedException)
+        //Then check the role of the user with entered access token (if not equal to admin then throw UnauthorizedException)
 
-        if(userAuthToken.getUser().getRole() == "nonadmin")
+        if(!userAuthToken.getUser().getRole().equals("admin"))
             throw new UnauthorizedException("ATH-001", "You are not authorized to update image");
 
-        //If the role is admin, get the existing image in the database with entered image id using getImageById() method in ImageDao class
+        //Now we know that the role is admin, so get the existing image in the database with entered image id using getImageById() method in ImageDao class
         ImageEntity existingImage = new ImageEntity();
-        if(userAuthToken.getUser().getRole() == "admin"){
-            existingImage = imageDao.getImageById(imageEntity.getId());
 
-            //If the image with entered image id does not exist throw ImageNotFoundException
-            if(existingImage == null)
-                throw new ImageNotFoundException("IMG-001", "Invalid image id entered");
+        existingImage = imageDao.getImageById(imageEntity.getId());
 
-            //If the image with entered image id exists in the database and is returned,
-            //try to set all the attributes of the new image(received by this method) using the existing image
-            existingImage.setDescription(imageEntity.getDescription());
-            existingImage.setImage(imageEntity.getImage());
-            existingImage.setStatus(imageEntity.getStatus());
-            existingImage.setName(imageEntity.getName());
-            existingImage.setId(imageEntity.getId());
-            existingImage.setUuid(imageEntity.getUuid());
-            existingImage.setCreated_at(imageEntity.getCreated_at());
-            existingImage.setNo_of_likes(imageEntity.getNo_of_likes());
-            existingImage.setUser_id(imageEntity.getUser_id());
+        //If the image with entered image id does not exist throw ImageNotFoundException
+        if(existingImage == null)
+            throw new ImageNotFoundException("IMG-001", "Invalid image id entered");
 
-            //Call updateImage() method for imageDao to update an image
-            //Note that ImageNotFoundException , UserNotFoundException and UnauthorizedException has been implemented
-            //Note that this method returns ImageEntity type object
+        //If the image with entered image id exists in the database and is returned,
+        //try to set all the attributes of the new image(received by this method) using the existing image
+        existingImage.setDescription(imageEntity.getDescription());
+        existingImage.setImage(imageEntity.getImage());
+        existingImage.setStatus(imageEntity.getStatus());
+        existingImage.setName(imageEntity.getName());
 
 
-        }
+        //Call updateImage() method for imageDao to update an image
+        //Note that ImageNotFoundException , UserNotFoundException and UnauthorizedException has been implemented
+        //Note that this method returns ImageEntity type object
 
         return imageDao.updateImage(existingImage);
     }
